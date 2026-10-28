@@ -125,8 +125,10 @@ bookshelves and sandstone (53 `.properties`) is not converted: BlueMap uses the 
     `mcpatcher/ctm` tiles to either pack.
   - `--no-myctmlib` drops the jar.
 - **CTM.** MyCTMLib connected textures are a `myctmlib` section in a texture's `.mcmeta` that points at a connection
-  sheet (`<name>_ctm`). The exporter writes the texture's own PNG, which is the base tile; no connected textures are
-  rendered yet.
+  sheet (`<name>_ctm`). The exporter writes the texture's own PNG, which is the base tile. It also writes the sections
+  to `gtnh/mods/myctmlib.json`, exports the connection sheets as textures, and gives variants that use them
+  `"renderer": "gtnh:ctm"`. Rendering connections is the job of that renderer (gtnh-render); without it, BlueMap
+  shows the base tile.
 
 ## Measured (release weekly-2.9.x-2026-10-26, `Modernity-2.9.x-fa35a3d.zip` sha256 `c7199df9…ec894`, `MyCTMLib-1.4.3-29x.jar` sha256 `1e16592d…e3a9`)
 
@@ -139,27 +141,32 @@ bookshelves and sandstone (53 `.properties`) is not converted: BlueMap uses the 
   modern textures, e.g. grass, stone and dirt. 325 change the look.
 - **Animations:** 14.
 
-**Modded** (`modded-report.json`; each export takes about 48 s of client run):
+**Modded** (`modded-report.json`; exporter jar with MyCTMLib support; the Modernity export takes 54 s of client run):
 
-- **Shared textures overridden:** 5221 of the 13800 textures present in both exports differ. By namespace: gregtech
-  1762, `gtnh_minecraft_1_7` 327, miscutils 266, botania 265, tinker 238, and so on, across 80 namespaces.
-- **Textures only in the Modernity export:** 1272.
-  - gregtech: 1254, overlay icons that Modernity adds and GT's own jar lacks;
-  - ic2: 13;
-  - myctmlib: 5.
-- **Textures only in the default export:** 16 (ic2 8, appliedenergistics2 5, gregtech 2, projectred 1), replaced by
-  MyCTMLib models or Modernity variants.
-- **Exported textures whose 1.7 resource Modernity ships:** 5371. 5319 of them are pixel-identical to Modernity's PNG.
-- **Changed without a matching Modernity PNG:** 196. These are IC2 sheet slices, Extra Utilities composites and
-  Railcraft.
+- **Shared textures overridden:** 5850 of the 16065 textures present in both exports differ. By namespace: gregtech
+  1731, appliedenergistics2 602, `gtnh_minecraft_1_7` 327, miscutils 266, botania 265, and so on, across 81
+  namespaces.
+- **Textures only in the Modernity export:** 1653.
+  - MyCTMLib connection sheets: 283;
+  - gregtech: 1312, mostly overlay icons that Modernity adds and GT's own jar lacks;
+  - the rest: miscutils 24, chisel 13, ic2 13, myctmlib 5, and others.
+- **Textures only in the default export:** 51 (gregtech 40, ic2 8, gtnhlanth 2, projectred 1), replaced by MyCTMLib
+  models or Modernity variants.
+- **Exported textures whose 1.7 resource Modernity ships:** 5987. 5935 of them are pixel-identical to Modernity's PNG.
+- **Changed without a matching Modernity PNG:** 207. These are IC2 sheet slices, Extra Utilities composites,
+  Railcraft, Iron Chests and others.
 - **CTM:**
   - Modernity has 535 MyCTMLib textures, all with the default `compact` method.
-  - 344 of them are used by exported blocks with the base tile.
-  - 342 of those are verified pixel-identical to Modernity's base PNG. The other 2 are GoodGenerator
+  - `gtnh/mods/myctmlib.json` lists 284 of them (all `compact`), with all 283 distinct connection sheets present;
+    766 blockstate variant references use `gtnh:ctm`.
+  - 313 exported textures are Modernity CTM base tiles. 311 of them are verified pixel-identical to Modernity's base
+    PNG. The other 2 are GoodGenerator
     `antimatterContainmentCasing` and `fieldRestrictingGlass`.
   - The 10 `ctm` mcmeta sections, from Twilight Forest tower devices, are emissive metadata, not connections.
 
-**Screenshots** (`WS/out/e2e-modernity/compare/<scene>/<view>.png`, default vs Modernity):
+**Screenshots** (`WS/out/e2e-modernity/compare/<scene>/<view>.png`, default vs Modernity). These were taken with
+packs from the exporter jar before its MyCTMLib support, so there are no `gtnh:ctm` variants and the base tiles
+are shown:
 
 | Scene | View | Pixels differing > 24 | Pixels differing at all |
 |---|---|---|---|
