@@ -203,7 +203,7 @@ def build(modernity_zip: Path, table: dict, jar_1_13: Path, out_zip: Path, relea
         dst.writestr("LICENSE-NOTICE.txt", (
             f"Textures from Modernity-GTNH ({release}), https://github.com/ModernityGTNH/Modernity-GTNH,\n"
             f"licensed CC BY-NC-SA 4.0 ({LICENSE_URL}); see MODERNITY-README.md for its credits.\n"
-            "Changes: renamed from the Minecraft 1.7.10 to the 1.13 texture layout by BlueMap-GTNH tools/modernity;\n"
+            "Changes: renamed from the Minecraft 1.7.10 to the 1.13 texture layout by the BlueMap-GTNH modernity tool;\n"
             "redstone dust dot/line textures cropped and rotated, water textures divided by the default water tint.\n"
             "This derived pack is under the same licence: non-commercial use only, share alike.\n"))
     tmp.replace(out_zip)

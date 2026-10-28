@@ -1,5 +1,5 @@
-"""Default vs Modernity screenshots: run the e2e harness (testing/e2e) once per pack set, keep each run's shots, and
-compare them view by view."""
+"""Default vs Modernity screenshots: run the e2e harness (sibling `e2e/` checkout) once per pack set, keep each run's
+shots, and compare them view by view."""
 
 from __future__ import annotations
 
@@ -12,7 +12,6 @@ from PIL import Image, ImageChops
 
 from . import paths
 
-E2E_PROJECT = paths.REPO / "testing" / "e2e"
 PIXEL_TOLERANCE = 24  # same per-channel threshold as the e2e scenes' tolerance.pixel
 
 
@@ -24,7 +23,7 @@ def run_e2e(scenes: list[str], packs: list[Path], build: bool) -> int:
         cmd += ["--packs", str(pack)]
     print("[e2e] " + " ".join(cmd), flush=True)
     # exit code 1 is expected: Modernity views differ from the default baselines by design
-    return subprocess.run(cmd, cwd=E2E_PROJECT).returncode
+    return subprocess.run(cmd, cwd=paths.e2e_project()).returncode
 
 
 def keep(scenes: list[str], dest: Path) -> None:

@@ -85,7 +85,7 @@ def cmd_compare(args) -> int:
 
 
 def export(out: Path, args, resource_packs: list[Path], extra_mods: list[Path], suffix: str | None) -> Path:
-    """Run the GTNH client exporter (tools/gtnh-exporter/launcher) and return the exported pack."""
+    """Run the GTNH client exporter (gtnh-exporter/launcher) and return the exported pack."""
     out = out.resolve()  # gtnh-client runs in its own directory
     cmd = ["uv", "run", "gtnh-client", "export", "--out", str(out)]
     if args.client_dir:
@@ -101,7 +101,7 @@ def export(out: Path, args, resource_packs: list[Path], extra_mods: list[Path], 
     if suffix:
         cmd += ["--pack-suffix", suffix]
     print("[modded] " + " ".join(cmd), flush=True)
-    code = subprocess.run(cmd, cwd=paths.EXPORTER_LAUNCHER).returncode
+    code = subprocess.run(cmd, cwd=paths.exporter_launcher()).returncode
     if code != 0:
         raise SystemExit(f"exporter failed with exit code {code}")
     return out / (f"bluemap-gtnh-resources-{paths.PACK_VERSION}" + (f"-{suffix}" if suffix else "") + ".zip")
@@ -196,7 +196,7 @@ def main(argv: list[str] | None = None) -> int:
                    help="bmh dump.ndjson passed to gtnh-client export; repeatable")
     p.set_defaults(func=cmd_modded)
 
-    p = sub.add_parser("e2e", help="default vs Modernity screenshots via testing/e2e into WS/out/e2e-modernity")
+    p = sub.add_parser("e2e", help="default vs Modernity screenshots via the e2e suite into WS/out/e2e-modernity")
     release_args(p)
     p.add_argument("scenes", nargs="+")
     p.add_argument("--default", help="default exporter pack (default: <out>/export-default/... from `modded --baseline`)")

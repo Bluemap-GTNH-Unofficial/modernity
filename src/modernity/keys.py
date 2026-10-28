@@ -1,6 +1,6 @@
-"""Python port of resource-key normalization N (legacy/.../ResourceKeys.kt) and the exporter's texture keys
-(tools/gtnh-exporter PackKeys.textureKey), to locate a Modernity texture in an exported pack.
-Golden vectors: testing/fixtures/resource-key-vectors.json."""
+"""Python port of resource-key normalization N (BlueMap fork legacy/.../ResourceKeys.kt) and the exporter's texture
+keys (gtnh-exporter PackKeys.textureKey), to locate a Modernity texture in an exported pack.
+Golden vectors: the BlueMap fork's testing/fixtures/resource-key-vectors.json."""
 
 from __future__ import annotations
 

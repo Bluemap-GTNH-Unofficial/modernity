@@ -3,9 +3,10 @@ import json
 import pytest
 
 from modernity import keys
-from modernity.paths import REPO
+from modernity.paths import bluemap_repo
 
-VECTORS = json.loads((REPO / "testing" / "fixtures" / "resource-key-vectors.json").read_text())["vectors"]
+# golden vectors shared with the BlueMap fork's ResourceKeys (sibling checkout `BlueMap/`)
+VECTORS = json.loads((bluemap_repo() / "testing" / "fixtures" / "resource-key-vectors.json").read_text())["vectors"]
 
 
 @pytest.mark.parametrize("vector", VECTORS, ids=[v["input"] for v in VECTORS])
