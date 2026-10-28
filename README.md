@@ -1,11 +1,26 @@
-# modernity
+# modernity: Modernity-GTNH look for BlueMap GTNH maps
 
-Optional [Modernity-GTNH](https://github.com/ModernityGTNH/Modernity-GTNH) look for BlueMap GTNH maps (plan.md §11,
-D6). From a user-supplied Modernity release it builds two BlueMap resource packs:
+> [!WARNING]
+> Unofficial: not affiliated with BlueMap, GT New Horizons or Modernity-GTNH. Vibe coded (written largely by an AI
+> coding agent), no quality guarantee, use at your own risk. See the
+> [umbrella repository](https://github.com/Bluemap-GTNH-Unofficial/BlueMap-GTNH) for details.
+
+Part of [Bluemap-GTNH-Unofficial/BlueMap-GTNH](https://github.com/Bluemap-GTNH-Unofficial/BlueMap-GTNH). Clone the
+umbrella with `git clone --recursive`; this repository expects its sibling checkouts (`BlueMap/`, `gtnh-exporter/`,
+`e2e/` and the workspace folders) next to it.
+
+An optional tool that gives BlueMap GTNH maps the look of the
+[Modernity-GTNH](https://github.com/ModernityGTNH/Modernity-GTNH) resource pack. It converts a Modernity release that
+you download yourself into BlueMap resource packs, and compares renders with and without them. No Modernity file is
+stored in or distributed from this repository.
+
+![The same Electric Blast Furnace with the default export and with Modernity-GTNH](https://raw.githubusercontent.com/Bluemap-GTNH-Unofficial/BlueMap-GTNH/main/docs/images/modernity-compare.jpg)
+
+From a user-supplied Modernity release it builds two BlueMap resource packs:
 
 | Pack | Built by | Content |
 |---|---|---|
-| `modernity-2.9.x-<sha>-modded-2.9.0-RC-2.zip` | `modernity modded` | a complete GTNH client export (`tools/gtnh-exporter`) made with Modernity and MyCTMLib loaded: models, blockstates and textures of all modded blocks, plus the 1.7 vanilla icons modded blocks use (`gtnh_minecraft_1_7`) |
+| `modernity-2.9.x-<sha>-modded-2.9.0-RC-2.zip` | `modernity modded` | a complete GTNH client export (`gtnh-exporter`) made with Modernity and MyCTMLib loaded: models, blockstates and textures of all modded blocks, plus the 1.7 vanilla icons modded blocks use (`gtnh_minecraft_1_7`) |
 | `modernity-2.9.x-<sha>-vanilla-1.13.zip` | `modernity vanilla` | Modernity's vanilla block textures, renamed from the 1.7.10 layout (`assets/minecraft/textures/blocks/<old>.png`) to the 1.13 layout BlueMap renders vanilla blocks with (`textures/block/<new>.png`) |
 
 **Licence.** Modernity-GTNH is CC BY-NC-SA 4.0. Its files are never committed here, and the tool only takes a
@@ -15,18 +30,19 @@ commercially, and share them under the same licence. The rename table in `data/`
 comes from ResourcePackConverter (MIT, see below).
 
 Python ≥ 3.12 with uv; the only dependency is Pillow. Paths are relative to the workspace `WS`, the directory that
-contains `BlueMap-GTNH/`; override it with `BMGTNH_WORKSPACE`.
+contains this `modernity/` checkout and its siblings `gtnh-exporter/`, `e2e/` and `BlueMap/`; override it with
+`BMGTNH_WORKSPACE`.
 
 ## Reproduce
 
 ```bash
-cd BlueMap-GTNH/tools/modernity
+cd modernity
 uv sync --group dev
 uv run modernity fetch          # newest weekly-2.9.x-* release -> WS/downloads/modernity/
 uv run modernity vanilla        # -> WS/out/modernity/modernity-2.9.x-<sha>-vanilla-1.13.zip + vanilla-report.json
 uv run modernity modded --baseline \
   --mod-jar ../gtnh-exporter/build/libs/bluemap-gtnh-exporter-0.1.0.jar \
-  --extra-states-dump ../../../out/scenes/gtnh-zoo/dump.ndjson   # -> modernity-2.9.x-<sha>-modded-2.9.0-RC-2.zip
+  --extra-states-dump ../out/scenes/gtnh-zoo/dump.ndjson   # -> modernity-2.9.x-<sha>-modded-2.9.0-RC-2.zip
 uv run modernity compare        # -> WS/out/modernity/modded-report.json (counts below)
 uv run modernity e2e vanilla-zoo gtnh-zoo   # -> WS/out/e2e-modernity/{default,modernity,compare}/
 uv run --group dev pytest
@@ -41,7 +57,7 @@ uv run --group dev pytest
   Every other command also accepts `--pack ZIP`; with it, a `MyCTMLib-*-29x.jar` next to the zip is used.
 - **`vanilla`** converts the pack's vanilla block textures (see below).
 - **`modded [--baseline] [--no-myctmlib] [--client-dir DIR] [--mod-jar JAR] [--extra-states-dump DUMP ...]`** runs
-  `gtnh-client export` (tools/gtnh-exporter/launcher) with the following options:
+  `gtnh-client export` (`WS/gtnh-exporter/launcher`) with the following options:
   - `--resource-pack <Modernity zip>`
   - `--extra-mod <MyCTMLib jar>`
   - `--pack-suffix modernity`
@@ -53,7 +69,7 @@ uv run --group dev pytest
   `export-default/`, which `compare` and `e2e` use as the default pack.
 - **`compare [--default PACK] [--modded PACK]`** compares the default export with the Modernity export texture by
   texture (`modded-report.json`).
-- **`e2e SCENE... [--default PACK] [--build] [--compare-only]`** runs `testing/e2e` twice:
+- **`e2e SCENE... [--default PACK] [--build] [--compare-only]`** runs the e2e suite (`WS/e2e`) twice:
   1. `uv run e2e run SCENE... --no-build --packs <default> --packs <modded> --packs <vanilla>`;
   2. the same with only the default pack.
 
@@ -111,7 +127,7 @@ bookshelves and sandstone (53 `.properties`) is not converted: BlueMap uses the 
   the resource manager with the pack enabled, the overridden textures come out automatically.
 - **Normalised paths.** The pack's textures use the normalised paths of the default pack, so `compare` maps each
   exported texture back to its 1.7 resource with the inverse of normalisation N (`keys.py`, checked against
-  `testing/fixtures/resource-key-vectors.json`).
+  the BlueMap fork's `testing/fixtures/resource-key-vectors.json`).
 - **Why MyCTMLib is loaded.**
   - The release notes say "CTMLIB IS REQUIRED FOR CONNECTED TEXTURES".
   - The pack's `pack.mcmeta` turns on MyCTMLib JSON models for AE2 and bees.
@@ -191,7 +207,7 @@ e2e tolerance of 24. Missing-texture (magenta) shares are practically unchanged:
    tiles with the new textures.
 
 **Pack order.** `BlueMapService.getPackRoots` loads `packs/*` in **reverse file-name order**, and the first pack that
-provides a resource wins (atlases are merged); see research/bluemap-codebase-map.md §3. The generated names start with
+provides a resource wins (atlases are merged). The generated names start with
 `modernity-`, which sorts after `bluemap-gtnh-resources-…` and `gtnh-runtime`, so they take priority. Do not rename them
 to anything that sorts before the default pack, such as the exporter's own `bluemap-gtnh-resources-2.9.0-RC-2-modernity.zip`:
 `-` sorts before `.`, so the default pack would win. The modded pack is a complete export, so the default pack may also
